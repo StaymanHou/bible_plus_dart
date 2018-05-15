@@ -17,7 +17,7 @@ class BibleBook {
   static const int _codeUnitOpenBrace = 123;
   static const int _codeUnitDash = 45;
   static const int _codeUnitCloseParentheses = 40;
-  static const int _codeUnitCloseBracket = 91;
+  static const int _codeUnitCloseBracket = 93;
   static const int _codeUnitCloseBrace = 125;
   static const int _codeUnitPeriod = 46;
   static const int _codeUnitComma = 44;
@@ -41,8 +41,8 @@ class BibleBook {
   List<int> _totalChapterCharsAcc;
   List<int> _totalVerseCharsAcc;
 
-  List<int> _shiftLookup = [0, 3, 2, 1];
-  List<int> _verseShiftLookup = [10, 4, 6, 8];
+  List<int> _shiftLookup = const [0, 3, 2, 1];
+  List<int> _verseShiftLookup = const [10, 4, 6, 8];
 
   /// Get the number of the book
   int get bookNumber => _bookNum;
@@ -302,13 +302,18 @@ class BibleBook {
       int pos = _bible.getWordPos(decWordNum);
       List<int> r = _bible.getRepeat(pos, decWordNum);
 
-      for (int j = 0; j < r.length; j++) {
-        if (r[j] > 0x3FF0) r[j] |= 0xC000;
-        if (r[j] == _bookTextType || r[j] == _chapTextType || r[j] == _descTextType || r[j] == _versTextType) {
-          sbPos = r[j] - _versTextType;
-          continue;
+      if (r != null) {
+        for (int j = 0; j < r.length; j++) {
+          if (r[j] > 0x3FF0) r[j] |= 0xC000;
+          if (r[j] == _bookTextType || r[j] == _chapTextType || r[j] == _descTextType || r[j] == _versTextType) {
+            sbPos = r[j] - _versTextType;
+            continue;
+          }
+          words[sbPos].add(_bible.getWord(r[j]));
         }
-        words[sbPos].add(_bible.getWord(r[j]));
+      } else {
+        String word = _bible.getWord(decWordNum);
+        words[sbPos].add(word);
       }
     }
 

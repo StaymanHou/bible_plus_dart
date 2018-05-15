@@ -1,5 +1,5 @@
 name: bible_plus
-version: 0.1.0
+version: 0.1.1
 author: Stayman Hou <stayman.hou@gmail.com>
 description: Library for reading PDB bible files.
 homepage: https://github.com/StaymanHou/bible_plus_dart

@@ -6,7 +6,7 @@ void main() {
   var bible;
 
   setUp(() async {
-    bible = new BiblePlus('test/files/.NIV.pdb');
+    bible = new BiblePlus('test/files/.KJV.pdb');
     try {
         bible.loadVersionInfo();
       } on Exception {
@@ -26,13 +26,13 @@ void main() {
     expect(gen.totalChapters, equals(50));
   });
 
-  test("BibleBook(Psalms).getCompleteVerse(1, 1) returns [psalms-chapter-1-verse-1-text, empty, 'Chapter 1', 'Psalm']", () {
+  test("BibleBook(Psalms).getCompleteVerse(1, 1) returns [psalms-chapter-1-verse-1-text, empty, 'Chapter 1', '']", () {
     var gen = bible.books[18];
-    expect(gen.getCompleteVerse(1, 1), equals(['Blessed is the man who does not walk in the counsel of the wicked or stand in the way of sinners or sit in the seat of mockers.', '', 'Chapter 1', 'Psalms']));
+    expect(gen.getCompleteVerse(1, 1), equals(['Blessed [is] the man that walketh not in the counsel of the ungodly, nor standeth in the way of sinners, nor sitteth in the seat of the scornful.', '', 'Chapter 1', '']));
   });
 
-  test("BibleBook(Genesis).getVerse(1, 1) returns 'In the beginning God created the heavens and the earth.'", () {
+  test("BibleBook(Genesis).getVerse(1, 1) returns 'In the beginning God created the heaven and the earth.'", () {
     var gen = bible.books[0];
-    expect(gen.getVerse(1, 1), equals('In the beginning God created the heavens and the earth.'));
+    expect(gen.getVerse(1, 1), equals('In the beginning God created the heaven and the earth.'));
   });
 }
