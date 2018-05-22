@@ -26,9 +26,9 @@ void main() {
     expect(gen.totalChapters, equals(50));
   });
 
-  test("BibleBook(Psalms).getCompleteVerse(1, 1) returns [psalms-chapter-1-verse-1-text, empty, 'Chapter 1', '']", () {
+  test("BibleBook(Psalms).getCompleteVerse(1, 1) returns [psalms-chapter-1-verse-1-text, empty, 'Kapitel 1', 'Psalm']", () {
     var gen = bible.books[18];
-    expect(gen.getCompleteVerse(1, 1), equals(['Blessed [is] the man that walketh not in the counsel of the ungodly, nor standeth in the way of sinners, nor sitteth in the seat of the scornful.', '', 'Chapter 1', '']));
+    expect(gen.getCompleteVerse(1, 1), equals(['Blessed is the man that walketh not in the counsel of the ungodly, nor standeth in the way of sinners, nor sitteth in the seat of the scornful.', '', 'Kapitel 1', 'Psalm']));
   });
 
   test("BibleBook(Genesis).getVerse(1, 1) returns 'In the beginning God created the heaven and the earth.'", () {
