@@ -28,9 +28,11 @@ class PdbHeader {
     offset += 4;
     offset += 4;
     offset += 4;
-    _typeStr = Util.readString(_headerData, offset, 4); // TODO: may need double check charset
+    _typeStr = Util.readString(
+        _headerData, offset, 4); // TODO: may need double check charset
     offset += 4;
-    _creatorStr = Util.readString(_headerData, offset, 4);  // TODO: may need double check charset
+    _creatorStr = Util.readString(
+        _headerData, offset, 4); // TODO: may need double check charset
     offset += 4;
     offset += 4;
     offset += 4;

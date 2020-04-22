@@ -10,12 +10,12 @@ class Util {
     }
     end++;
 
-    Utf8Decoder converter = new Utf8Decoder(allowMalformed: true);
+    Utf8Decoder converter = Utf8Decoder(allowMalformed: true);
     return converter.convert(data, 0, end);
   }
 
   static String readString(Uint8List data, int offset, int length) {
-    Utf8Decoder converter = new Utf8Decoder(allowMalformed: true);
+    Utf8Decoder converter = Utf8Decoder(allowMalformed: true);
     return converter.convert(data, offset, offset + length);
   }
 
@@ -25,8 +25,8 @@ class Util {
 
   static int readInt(Uint8List data, int offset) {
     return (((data[offset] & 0xff) << 24) |
-    ((data[offset + 1] & 0xff) << 16) |
-    ((data[offset + 2] & 0xff) << 8) |
-    (data[offset + 3] & 0xff));
+        ((data[offset + 1] & 0xff) << 16) |
+        ((data[offset + 2] & 0xff) << 8) |
+        (data[offset + 3] & 0xff));
   }
 }

@@ -20,14 +20,14 @@ class PdbAccess {
   PdbHeader get header {
     if (_header == null) {
       _headerData = _iostream.read(78);
-      _header = new PdbHeader(_headerData);
+      _header = PdbHeader(_headerData);
       header.load();
-      _records = new List(header.totalRecords);
+      _records = List(header.totalRecords);
       _readOffsets();
 
       if (_recordOffsets[_recordOffsets.length - 1] > _iostream.size) {
         _isCorrupted = true;
-        throw new Exception('Header is corrupted');
+        throw Exception('Header is corrupted');
       }
     }
     return _header;
@@ -38,9 +38,10 @@ class PdbAccess {
   void close() {
     _iostream.close();
     _header = null;
-    if (_records != null) for (int i = 0; i < _records.length; i++) {
-      _records[i] = null;
-    }
+    if (_records != null)
+      for (int i = 0; i < _records.length; i++) {
+        _records[i] = null;
+      }
     _records = null;
     _headerData = null;
     _iostream = null;
@@ -63,7 +64,7 @@ class PdbAccess {
       length = _iostream.size - _recordOffsets[recNo];
     }
     _iostream.seek(_recordOffsets[recNo]);
-    PdbRecord pr = new PdbRecord(_iostream.read(length));
+    PdbRecord pr = PdbRecord(_iostream.read(length));
     _records[recNo] = pr;
   }
 
@@ -71,8 +72,8 @@ class PdbAccess {
     int n = _header.totalRecords;
     Uint8List tempRead = _iostream.read(8 * n);
     int offset = 0;
-    _recordOffsets = new List(n);
-    _recordAttrs = new List(n);
+    _recordOffsets = List(n);
+    _recordAttrs = List(n);
     for (int i = 0; i < n; i++) {
       _recordOffsets[i] = Util.readInt(tempRead, offset);
       _recordAttrs[i] = tempRead[offset + 4];
