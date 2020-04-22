@@ -40,12 +40,16 @@ class BiblePlus {
 
   /// Get all books in the bible
   List<BibleBook> get books => _books;
+
   /// Get the total number of books in the bible
   int get totalBooks => _books.length;
+
   /// Get the reason why it failed to load the bible if any
   int get failReason => _failReason;
+
   /// Get the version name of the bible
   String get versionName => Util.readStringTrimZero(_versionName);
+
   /// Get the version info of the bible
   String get versionInfo => Util.readStringTrimZero(_versionInfo);
   String get sepChar => Util.readStringTrimZero(_sepChar);
@@ -54,6 +58,7 @@ class BiblePlus {
   bool get isByteShifted {
     return (_versionAttr & _infByteNotShifted) == 0;
   }
+
   List<bool> get compressed {
     loadWordIndex();
     return _compressed;
@@ -61,7 +66,7 @@ class BiblePlus {
 
   /// Create a BiblePlus instance of the file specified by the filepath
   BiblePlus(String filepath) {
-    _pdbAccess = new PdbAccess(new PdbFileStream(filepath));
+    _pdbAccess = PdbAccess(PdbFileStream(filepath));
   }
 
   /// Load the basic info of the bible. You would probably always call this method after initializing a BiblePlus instance
@@ -72,17 +77,17 @@ class BiblePlus {
       _header = _pdbAccess.header;
     } on Exception {
       _failReason = ERR_NOT_PDB_FILE;
-      throw new Exception('ERR_NOT_PDB_FILE');
+      throw Exception('ERR_NOT_PDB_FILE');
     }
 
     if (_pdbAccess.isCorrupted == true) {
       _failReason = ERR_FILE_CORRUPTED;
-      throw new Exception('ERR_FILE_CORRUPTED');
+      throw Exception('ERR_FILE_CORRUPTED');
     }
 
     if (_header.type != 'bibl') {
       _failReason = ERR_NOT_BIBLE_PLUS_FILE;
-      throw new Exception('ERR_NOT_BIBLE_PLUS_FILE');
+      throw Exception('ERR_NOT_BIBLE_PLUS_FILE');
     }
 
     PdbRecord version = _pdbAccess.readRecord(0);
@@ -104,28 +109,28 @@ class BiblePlus {
     index += 2;
     if (_wordIndex + _totalWordRec >= _header.totalRecords) {
       _failReason = ERR_FILE_CORRUPTED;
-      throw new Exception('ERR_FILE_CORRUPTED');
+      throw Exception('ERR_FILE_CORRUPTED');
     }
     int totalBooks = Util.readShort(data, index);
     index += 2;
     if (totalBooks < 0) {
       _failReason = ERR_FILE_CORRUPTED;
-      throw new Exception('ERR_FILE_CORRUPTED');
+      throw Exception('ERR_FILE_CORRUPTED');
     }
 
-    _books = new List(totalBooks);
+    _books = List(totalBooks);
 
     for (int i = 0; i < totalBooks; i++) {
       if (index + _bookRecSize > data.length) {
         _failReason = ERR_FILE_CORRUPTED;
-        throw new Exception('ERR_FILE_CORRUPTED');
+        throw Exception('ERR_FILE_CORRUPTED');
       }
 
       try {
-        _books[i] = new BibleBook(this, data, index);
+        _books[i] = BibleBook(this, data, index);
       } on Exception {
         _failReason = ERR_FILE_CORRUPTED;
-        throw new Exception('ERR_FILE_CORRUPTED');
+        throw Exception('ERR_FILE_CORRUPTED');
       }
 
       index += _bookRecSize;
@@ -143,9 +148,9 @@ class BiblePlus {
     Uint8List indexData = r.data;
     int totalIndexes = Util.readShort(indexData, index);
     index += 2;
-    _wordLength = new List(totalIndexes);
-    _totalWord = new List(totalIndexes);
-    _compressed = new List(totalIndexes);
+    _wordLength = List(totalIndexes);
+    _totalWord = List(totalIndexes);
+    _compressed = List(totalIndexes);
 
     for (int i = 0; i < totalIndexes; i++) {
       _wordLength[i] = Util.readShort(indexData, index);
@@ -157,21 +162,21 @@ class BiblePlus {
     }
 
     int totalByteAcc = 0;
-    _byteAcc = new List(totalIndexes + 1);
+    _byteAcc = List(totalIndexes + 1);
     _byteAcc[0] = 0;
     for (int i = 1; i <= totalIndexes; i++) {
       totalByteAcc += _totalWord[i - 1] * _wordLength[i - 1];
       _byteAcc[i] = totalByteAcc;
     }
 
-    List<PdbRecord> records = new List(_totalWordRec);
+    List<PdbRecord> records = List(_totalWordRec);
     int totalLen = 0;
     for (int i = 0; i < _totalWordRec; i++) {
       records[i] = _pdbAccess.readRecord(_wordIndex + i + 1);
       totalLen += records[i].data.length;
     }
 
-    _wordData = new Uint8List(totalLen);
+    _wordData = Uint8List(totalLen);
     int l = 0;
     for (int i = 0; i < _totalWordRec; i++) {
       Uint8List d = records[i].data;
@@ -215,7 +220,7 @@ class BiblePlus {
         repeat = (len / 2).floor();
         if (repeat == 0) return null;
 
-        result = new List(repeat);
+        result = List(repeat);
         int st = _getWordIndex(pos, wordNum);
         for (int i = 0; i < repeat; i++) {
           result[i] = Util.readShort(_wordData, st);
@@ -270,7 +275,3 @@ class BiblePlus {
     return Util.readString(_wordData, index, len);
   }
 }
-
-
-
-

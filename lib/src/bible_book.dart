@@ -46,13 +46,16 @@ class BibleBook {
 
   /// Get the number of the book
   int get bookNumber => _bookNum;
+
   /// Get the total
   int get totalChapters {
     loadBook();
     return _totalChapters;
   }
+
   /// Get the full name of the book
   String get fullName => Util.readStringTrimZero(_complexName);
+
   /// Get the short name of the book
   String get shortName => Util.readStringTrimZero(_simpleName);
   Uint8List get data {
@@ -69,7 +72,8 @@ class BibleBook {
     _bookIndex = Util.readShort(data, offset + index);
     index += 2;
     _totalBookRec = Util.readShort(data, offset + index);
-    if (_bookIndex + _totalBookRec > bible.header.totalRecords) throw new Exception('Incorrect book record');
+    if (_bookIndex + _totalBookRec > bible.header.totalRecords)
+      throw Exception('Incorrect book record');
     index += 2;
     _simpleName = data.sublist(offset + index, offset + index + 8);
     index += 8;
@@ -84,13 +88,13 @@ class BibleBook {
     PdbRecord r = access.readRecord(_bookIndex);
     _indexData = r.data;
 
-    List<PdbRecord> records = new List(_totalBookRec);
+    List<PdbRecord> records = List(_totalBookRec);
     int totalLen = 0;
     for (int i = 0; i < _totalBookRec; i++) {
       records[i] = access.readRecord(_bookIndex + i + 1);
       totalLen += records[i].data.length;
     }
-    _data = new Uint8List(totalLen);
+    _data = Uint8List(totalLen);
     int pos = 0;
     for (int i = 0; i < _totalBookRec; i++) {
       Uint8List data = records[i].data;
@@ -100,18 +104,18 @@ class BibleBook {
     }
 
     _totalChapters = Util.readShort(_indexData, 0);
-    _totalVersesAcc = new List(_totalChapters);
+    _totalVersesAcc = List(_totalChapters);
     int offset = 2;
     for (int i = 0; i < _totalChapters; i++) {
       _totalVersesAcc[i] = Util.readShort(_indexData, offset);
       offset += 2;
     }
-    _totalChapterCharsAcc = new List(_totalChapters);
+    _totalChapterCharsAcc = List(_totalChapters);
     for (int i = 0; i < _totalChapters; i++) {
       _totalChapterCharsAcc[i] = Util.readInt(_indexData, offset);
       offset += 4;
     }
-    _totalVerseCharsAcc = new List(((_indexData.length - offset) / 2).floor());
+    _totalVerseCharsAcc = List(((_indexData.length - offset) / 2).floor());
     for (int i = 0; offset < _indexData.length; i++) {
       _totalVerseCharsAcc[i] = Util.readShort(_indexData, offset);
       offset += 2;
@@ -159,7 +163,10 @@ class BibleBook {
       List<int> r = _bible.getRepeat(pos, decWordNum);
       if (r != null) {
         for (int t in r) {
-          if (t == _bookTextType || t == _chapTextType || t == _descTextType || t == _versTextType) {
+          if (t == _bookTextType ||
+              t == _chapTextType ||
+              t == _descTextType ||
+              t == _versTextType) {
             sbPos = t - _versTextType;
             continue;
           }
@@ -174,7 +181,7 @@ class BibleBook {
     }
 
     String sepChar = _bible.sepChar;
-    List<String> res = new List(4);
+    List<String> res = List(4);
     res[0] = _stringFromWords(words[0], sepChar);
     res[1] = _stringFromWords(words[1], sepChar);
     res[2] = _stringFromWords(words[2], sepChar);
@@ -206,7 +213,7 @@ class BibleBook {
     if (words == null) return '';
     if (words.length == 0) return '';
 
-    StringBuffer sb = new StringBuffer();
+    StringBuffer sb = StringBuffer();
 
     String prev;
     String cur;
@@ -217,13 +224,27 @@ class BibleBook {
         // no space
       } else {
         int lastPrev = prev.codeUnitAt(prev.length - 1);
-        if (lastPrev == _codeUnitOpenParentheses || lastPrev == _codeUnitOpenBracket || lastPrev == _codeUnitOpenBrace || lastPrev == _codeUnitDash || (lastPrev >= 0x2e80 && lastPrev <= 0x9fff)) {
+        if (lastPrev == _codeUnitOpenParentheses ||
+            lastPrev == _codeUnitOpenBracket ||
+            lastPrev == _codeUnitOpenBrace ||
+            lastPrev == _codeUnitDash ||
+            (lastPrev >= 0x2e80 && lastPrev <= 0x9fff)) {
           // no space
         } else if (cur.length == 0) {
           // no space too, exceptional case
         } else {
           int firstCur = cur.codeUnitAt(0);
-          if (firstCur == _codeUnitDash || firstCur == _codeUnitCloseParentheses || firstCur == _codeUnitCloseBracket || firstCur == _codeUnitCloseBrace || firstCur == _codeUnitPeriod || firstCur == _codeUnitComma || firstCur == _codeUnitColon || firstCur == _codeUnitSemiColon || firstCur == _codeUnitQuestionMark || firstCur == _codeUnitExclamationMark || (firstCur >= 0x2e80 && firstCur <= 0x9fff)) {
+          if (firstCur == _codeUnitDash ||
+              firstCur == _codeUnitCloseParentheses ||
+              firstCur == _codeUnitCloseBracket ||
+              firstCur == _codeUnitCloseBrace ||
+              firstCur == _codeUnitPeriod ||
+              firstCur == _codeUnitComma ||
+              firstCur == _codeUnitColon ||
+              firstCur == _codeUnitSemiColon ||
+              firstCur == _codeUnitQuestionMark ||
+              firstCur == _codeUnitExclamationMark ||
+              (firstCur >= 0x2e80 && firstCur <= 0x9fff)) {
             // no space
           } else {
             sep = true;
@@ -244,7 +265,7 @@ class BibleBook {
     int verseLength = _getVerseLength(chapter, verse);
     int decShift = _shiftLookup[verseStart * 7 % 4];
     int compStart = (verseStart * 7 / 4).floor();
-    List<int> decValueBuffer = new List(3);
+    List<int> decValueBuffer = List(3);
     int index = compStart;
 
     switch (decShift) {
@@ -262,7 +283,8 @@ class BibleBook {
 
     int sbPos = 0;
 
-    outer: for (int i = 0; i < verseLength; i++) {
+    outer:
+    for (int i = 0; i < verseLength; i++) {
       if (index >= _data.length) break;
       switch (decShift) {
         case 0:
@@ -291,11 +313,12 @@ class BibleBook {
         default:
       }
 
-      int value = decValueBuffer[0] << 16 | decValueBuffer[1] << 8 | decValueBuffer[2];
+      int value =
+          decValueBuffer[0] << 16 | decValueBuffer[1] << 8 | decValueBuffer[2];
       value = value >> _verseShiftLookup[decShift];
       value = value & 0x3FFF;
       decShift++;
-      if (decShift == 4)  decShift = 0;
+      if (decShift == 4) decShift = 0;
       if (value > 0x3FF0) value |= 0xC000;
 
       int decWordNum = value;
@@ -305,7 +328,10 @@ class BibleBook {
       if (r != null) {
         for (int j = 0; j < r.length; j++) {
           if (r[j] > 0x3FF0) r[j] |= 0xC000;
-          if (r[j] == _bookTextType || r[j] == _chapTextType || r[j] == _descTextType || r[j] == _versTextType) {
+          if (r[j] == _bookTextType ||
+              r[j] == _chapTextType ||
+              r[j] == _descTextType ||
+              r[j] == _versTextType) {
             sbPos = r[j] - _versTextType;
             continue;
           }
@@ -318,7 +344,7 @@ class BibleBook {
     }
 
     String sepChar = _bible.sepChar;
-    List<String> res = new List(4);
+    List<String> res = List(4);
     res[0] = _stringFromWords(words[0], sepChar);
     res[1] = _stringFromWords(words[1], sepChar);
     res[2] = _stringFromWords(words[2], sepChar);

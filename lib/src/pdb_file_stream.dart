@@ -6,7 +6,7 @@ class PdbFileStream {
   int _pos;
 
   PdbFileStream(String filepath) {
-    File file = new File(filepath);
+    File file = File(filepath);
     _fis = file.openSync();
     _pos = 0;
   }
